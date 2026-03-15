@@ -11,8 +11,8 @@ The configurations in this repo are **sanitised versions** of what is actually r
 | Stack | Services |
 |---|---|
 | `monitoring` | Gotify, Uptime Kuma, PeaNUT, Traefik |
-| `tools` | Mazanoke, IT-Tools, Stirling-PDF, Omni-Tools, LubeLogger, SmokePing, CyberChef, Nginx Proxy Manager |
-| `git` | Gitea, Gitea Actions Runner, Traefik |
+| `foss-tools` | Mazanoke, IT-Tools, Stirling-PDF, Omni-Tools, LubeLogger, SmokePing, CyberChef, Nginx Proxy Manager |
+| `gitops` | Gitea, Gitea Actions Runner, Traefik |
 
 ## Structure
 
