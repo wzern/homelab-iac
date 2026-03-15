@@ -1,0 +1,49 @@
+services:
+  # =============================================================================
+  # GOTIFY - Push notification service
+  # =============================================================================
+  gotify:
+    image: gotify/server:latest
+    container_name: gotify
+    volumes:
+      - './gotify:/app/data'
+    restart: unless-stopped
+
+  # =============================================================================
+  # UPTIME KUMA - Endpoint & ping monitoring
+  # =============================================================================
+  uptime-kuma:
+    image: louislam/uptime-kuma:2
+    container_name: uptime-kuma
+    depends_on:
+      - gotify
+    volumes:
+      - ./uptimekuma:/app/data
+    restart: unless-stopped
+
+  # =============================================================================
+  # PEANUT - WebUI for UPS
+  # =============================================================================
+  peanut:
+    image: brandawg93/peanut:latest
+    container_name: PeaNUT
+    volumes:
+      - ./peanut/config:/config
+    environment:
+      - WEB_PORT=8080
+    restart: unless-stopped
+
+  # =============================================================================
+  # TRAEFIK - Proxy apps via https
+  # =============================================================================
+  traefik:
+    image: traefik:v3.3.6
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - ./traefik/data/certs/:/var/traefik/certs/:rw
+    restart: unless-stopped
