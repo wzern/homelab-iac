@@ -1,0 +1,44 @@
+services:
+  # =============================================================================
+  # Gitea - Local Git Host
+  # =============================================================================
+  gitea-server:
+    image: gitea/gitea
+    container_name: gitea
+    ports:
+      - "222:22"
+    volumes:
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+  # =============================================================================
+  # Gitea Runner - Gitea Actions runner
+  # =============================================================================
+  runner:
+    image: docker.io/gitea/act_runner:nightly
+    environment:
+      CONFIG_FILE: /config.yaml
+      GITEA_INSTANCE_URL: "${INSTANCE_URL}"
+      GITEA_RUNNER_REGISTRATION_TOKEN: "${REGISTRATION_TOKEN}"
+      GITEA_RUNNER_NAME: "${RUNNER_NAME}"
+    volumes:
+      - ./gitea-runner/config.yaml:/config.yaml
+      - ./gitea-runner/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # =============================================================================
+  # Traefik - Proxy apps via https
+  # =============================================================================
+  traefik:
+    image: traefik:v3.3.6
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/config/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - ./traefik/data/certs/:/var/traefik/certs/:rw
+    restart: unless-stopped
