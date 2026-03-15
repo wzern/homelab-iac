@@ -1,0 +1,97 @@
+services:
+  # =============================================================================
+  # MAZANOKE - Local image optimiser
+  # =============================================================================
+  mazanoke:
+    container_name: mazanoke
+    image: ghcr.io/civilblur/mazanoke:latest
+    restart: unless-stopped
+
+
+  # =============================================================================
+  # IT-TOOLS - Tools for devs
+  # =============================================================================
+  it-tools:
+    container_name: it-tools
+    image: corentinth/it-tools:latest
+    restart: unless-stopped
+
+
+  # =============================================================================
+  # STIRLING-PDF - PDF multi-tool
+  # =============================================================================
+  stirling-pdf:
+    container_name: stirling-pdf
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+    volumes:
+      - ./stirlingpdf/trainingData:/usr/share/tessdata
+      - ./stirlingpdf/extraConfigs:/configs
+      - ./stirlingpdf/customFiles:/customFiles/
+      - ./stirlingpdf/logs:/logs/
+      - ./stirlingpdf/pipeline:/pipeline/
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - LANGS=en_US
+    restart: unless-stopped
+
+
+  # =============================================================================
+  # OMNI-TOOLS - Random useful tools
+  # =============================================================================
+  omni-tools:
+    container_name: omni-tools
+    image: iib0011/omni-tools:latest
+    restart: unless-stopped
+
+
+  # =============================================================================
+  # LUBE LOGGER -  Vehicle maintenance logging
+  # =============================================================================
+  lubelogger:
+    container_name: lubelogger
+    image: ghcr.io/hargata/lubelogger:latest
+    volumes:
+      - ./lubelogger/data:/App/data
+      - ./lubelogger/keys:/root/.aspnet/DataProtection-Keys
+    env_file:
+      - ./lubelogger/.env
+    restart: unless-stopped
+
+
+  # =============================================================================
+  # SMOKE PING - Network latency monitoring
+  # =============================================================================
+  smokeping:
+    container_name: smokeping
+    image: lscr.io/linuxserver/smokeping:latest
+    volumes:
+      - ./smokeping/config:/config
+      - ./smokeping/data:/data
+    environment:
+      - TZ=Pacific/Auckland
+    restart: unless-stopped
+
+
+  # =============================================================================
+  # CYBER CHEF - Random useful tools
+  # =============================================================================
+  cyberchef:
+    container_name: cyberchef
+    image: ghcr.io/gchq/cyberchef:latest
+    environment:
+      - TZ=Pacific/Auckland
+    restart: unless-stopped
+
+
+  # =============================================================================
+  # NGINX PROXY MANAGER - Proxy apps via https
+  # =============================================================================
+  proxy:
+    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./proxy/data:/data
+      - ./proxy/letsencrypt:/etc/letsencrypt
